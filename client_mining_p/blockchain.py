@@ -14,7 +14,7 @@ class Blockchain(object):
         self.current_transactions = []
         self.nodes = set()
 
-        self.new_block(previous_hash=1, proof=100)
+        self.new_block(previous_hash=1, proof=99)
 
     def new_block(self, proof, previous_hash=None):
         """
@@ -93,7 +93,7 @@ class Blockchain(object):
     @staticmethod
     def valid_proof(last_proof, proof):
         """
-        Validates the Proof:  Does hash(last_proof, proof) contain 4
+        Validates the Proof:  Does hash(last_proof, proof) contain 6
         leading zeroes?
         """
         guess = f'{last_proof}{proof}'.encode()
@@ -144,13 +144,18 @@ def mine():
     # We run the proof of work algorithm to get the next proof...
     last_block = blockchain.last_block
     last_proof = last_block['proof']
-    proof = blockchain.proof_of_work(last_proof)
+    
+    proof = 0
+    while blockchain.valid_proof(last_proof, proof) is False:
+        print("failure")
+        proof += 1
 
+    print("success")
     # We must receive a reward for finding the proof.
     # The sender is "0" to signify that this node has mine a new coin
     blockchain.new_transaction(
-        sender="0",
-        recipient=node_identifier,
+        recipient="0",
+        sender=node_identifier,
         amount=1,
     )
 
